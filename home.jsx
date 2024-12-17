@@ -5,6 +5,7 @@ export default function Home() {
     <div>
       <Clock cityKey={"stockholm"} />
       <Clock cityKey={"london"} />
+      <Clock cityKey={"new-york"} />
     </div>
   );
 }

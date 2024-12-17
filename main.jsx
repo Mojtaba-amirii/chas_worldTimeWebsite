@@ -4,10 +4,10 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Root from "./Root";
-import Home from "./Home";
+import Home from "./home";
 import About from "./About";
 import Contact from "./Contact";
-import SingleClock from "./SingelClock";
+import SingleClock from "./SingleClock";
 
 const router = createBrowserRouter([
   {
