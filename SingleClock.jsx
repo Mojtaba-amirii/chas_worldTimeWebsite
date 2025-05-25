@@ -1,26 +1,34 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+
 import { timeZones } from "./timeZones";
+import { useParams } from "react-router-dom";
 
 export default function SingleClock() {
-  const params = useParams();
-  const timeZoneData = timeZones[params.cityKey];
-  const [time, setTime] = useState();
+  const { cityKey } = useParams();
+  const timeZoneData = timeZones[cityKey];
+  const [time, setTime] = useState(getTime);
+
+  const getTime = () =>
+    new Date().toLocaleTimeString("sv-SE", {
+      timeZone: timeZoneData?.timeZone,
+    });
 
   useEffect(() => {
-    setInterval(() => {
-      const date = new Date();
-      setTime(
-        date.toLocaleTimeString("sv-SE", { timeZone: timeZoneData.timeZone })
-      );
-    }, 1000);
-  }, []);
+    if (!timeZoneData) return;
+    const interval = setInterval(() => setTime(getTime()), 1000);
+    return () => clearInterval(interval);
+  }, [cityKey]);
+
+  if (!timeZoneData) {
+    return (
+      <div className="p-6 bg-red-100 rounded-md text-red-700">
+        City not found.
+      </div>
+    );
+  }
 
   return (
-    <div
-      className="flex justify-between items-center md:items-start
-      md:flex-col p-6 w-full md:w-64 bg-slate-200 rounded-md mb-4 md:mr-4"
-    >
+    <div className="flex justify-between items-center md:items-start md:flex-col p-6 w-full md:w-64 bg-slate-200 rounded-md mb-4 md:mr-4">
       <div className="text-2xl text-gray-600">{timeZoneData.city}</div>
       <div className="text-sm uppercase text-blue-700 font-bold md:mb-4">
         {timeZoneData.country}

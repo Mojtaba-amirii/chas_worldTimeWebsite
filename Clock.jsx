@@ -1,20 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+
 import { timeZones } from "./timeZones";
 import { Link } from "react-router-dom";
 
 export default function Clock({ cityKey }) {
-  const [time, setTime] = useState();
-
   const timeZoneData = timeZones[cityKey];
+  const [time, setTime] = useState(getTime);
+
+  const getTime = useCallback(
+    () =>
+      new Date().toLocaleTimeString("sv-SE", {
+        timeZone: timeZoneData?.timeZone,
+      }),
+    [timeZoneData]
+  );
 
   useEffect(() => {
-    setInterval(() => {
-      const date = new Date();
-      setTime(
-        date.toLocaleTimeString("sv-SE", { timeZone: timeZoneData.timeZone })
-      );
-    }, 1000);
-  }, []);
+    if (!timeZoneData) return;
+    const interval = setInterval(() => setTime(getTime()), 1000);
+    return () => clearInterval(interval);
+  }, [getTime, timeZoneData]);
+
+  if (!timeZoneData) {
+    return (
+      <div className="p-6 bg-red-100 rounded-md text-red-700">
+        City not found.
+      </div>
+    );
+  }
 
   return (
     <div
@@ -26,7 +39,7 @@ export default function Clock({ cityKey }) {
         {time}
       </div>
       <div className=" text-gray-600 underline hover:text-gray-400">
-        <Link to={`Clock/${cityKey}`}>bigger</Link>
+        <Link to={`clock/${cityKey}`}>Bigger</Link>
       </div>
     </div>
   );
